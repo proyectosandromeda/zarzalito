@@ -1,0 +1,113 @@
+{% extends 'master.twig' %}
+{% block title %}
+	Usuarios
+{% endblock %}
+
+
+{% block body %}
+
+	<h4 class="text-center lblmodule">En este módulo podrás consultar todo lo referente a usuarios</h4>
+
+	<div class="container-fluid">
+
+		<table class="table dataTable" id="table_user">
+			<thead>
+				<tr>
+					<th>Email</th>
+					<th>Nombre</th>
+					<th>Rol</th>
+					<th>Acciones</th>
+				</tr>
+			</thead>
+			<tbody>
+
+				{% for list_usuarios in usuarios %}
+					<tr>
+						<td>{{list_usuarios.email}}</td>
+						<td>{{list_usuarios.firts_name}}
+							{{list_usuarios.last_name}}</td>
+						<td>{{list_usuarios.role}}</td>
+						<td>
+							<i class="fas fa-edit fa-2x edit_user" data-email="{{list_usuarios.email}}" data-iduser="{{list_usuarios.id}}" data-nombre="{{list_usuarios.first_name}}" data-apellido="{{list_usuarios.last_name}}" data-role="{{list_usuarios.idrol}}"></i>
+						</td>
+					</tr>
+				{% endfor %}
+
+			</tbody>
+		</table>
+	</div>
+
+	<div class="modal fade" id="modal_edit_usuarios" aria-labelledby="modal_edit_usuarios" aria-hidden="true">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="modal_edit_usuarios">Usuarios</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form method="post" action="{{url_for('AddUsers')}}">
+						<div class="row">
+							<h5 class="mb-4">Datos personales</h5>
+
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label for="nombres" class="form-label required">Nombres</label>
+									<input type="text" class="form-control" name="nombre" placeholder="Digite los nombres">
+								</div>
+
+								<div class="mb-3">
+									<label for="rol" class="form-label required">Rol</label>
+									<select name="rol" class="form-select" id="rol">
+										<option selected>Seleccione rol</option>
+										{% for list_roles in roles %}
+											<option value="{{list_roles.id}}">{{list_roles.name}}</option>
+										{% endfor %}
+
+									</select>
+								</div>
+							</div>
+
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label for="apellidos" class="form-label required">Apellidos</label>
+									<input type="text" name="apellido" class="form-control" id="apellidos" placeholder="Digite los apellidos">
+								</div>
+							</div>
+
+
+						</div>
+
+						<div class="row">
+							<h5 class="mb-4 mt-4">Datos de la cuenta</h5>
+							<div class="col-md-6">
+
+								<div class="mb-3">
+									<label for="correo" class="form-label required">Correo electrónico</label>
+									<input type="email" class="form-control" name="email" placeholder="Digite el correo electrónico">
+								</div>
+								<div class="mb-3">
+									<label for="contrasena" class="form-label required">Contraseña</label>
+									<input
+									type="password" name="passwd" class="form-control" id="contrasena" placeholder="Ingrese una contraseña">
+								<!-- <small class="password-requirements">Tu contraseña no es segura</small>
+																															<ul class="password-requirements list-unstyled">
+																																<li>Debe tener mínimo 8 caracteres.</li>
+																																<li>Debe incluir mínimo un número.</li>
+																																<li>Debe incluir letras mayúsculas y minúsculas.</li>
+																															</ul> -->
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+							<button type="submit" class="btn btn-primary">Guardar</button>
+							<input type="hidden" name="idusuario">
+							{{ csrf_field() | raw }}
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+	{% endblock %}
+	{% block js %}{% endblock %}
