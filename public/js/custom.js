@@ -406,7 +406,7 @@ $(document).ready(function () {
 
 
     if ($('#table_tickets')) {
-        $('#table_tickets').DataTable({
+       let tickets = $('#table_tickets').DataTable({
             "ajax": `${BaseUrl.ajaxurl}/tickets/all`,
             "bDestroy": true,
             "search": true,
@@ -421,6 +421,7 @@ $(document).ready(function () {
             "columns": [
                 { "data": "name" },
                 { "data": "area" },
+                { "data": "phone" },
                 { "data": "problem" },
                 { "data": "fecha" },
                 { "data": "estado" },
@@ -446,6 +447,25 @@ $(document).ready(function () {
                 "url": BaseUrl.ajaxurl + "/js/Spanish.json"
             }
         })
+
+        /**
+         * aplico filtros de busqueda a la tabla
+         */
+        $('#table_tickets thead tr').clone(true).appendTo('#table_tickets thead');
+        $('#table_tickets thead tr:eq(1) th').each(function (i) {
+            var title = $(this).text();
+            
+            if (title !== "Acción") {
+                $(this).html('<input type="text" class="form-control" placeholder="Buscar ' + title + '" />');
+            }
+            $('input', this).on('keyup change', function () {
+                if (tickets.column(i).search() !== this.value) {
+                    tickets.column(i)
+                        .search(this.value)
+                        .draw();
+                }
+            });
+        });
     }
 
 

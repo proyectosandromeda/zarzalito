@@ -60,26 +60,20 @@ $app->group('/tickets', function (RouteCollectorProxy $app) {
     
 })->add('csrf');
 
-$app->group('/api', function (RouteCollectorProxy $app) {
-    $app->get("/pruebas", "ControladorApi:pruebas")->setName('Api');
-    $app->get("/consultar_estrategias/{idcliente:[0-9]+}", "ControladorApi:list_estrategias_byclientes")->setName('Api');
-    $app->get("/listar_experiencias_clientes/{idcliente:[0-9]+}", "ControladorApi:listar_experiencias_clientes")->setName('Api');
-    $app->get("/listar_mecanicas_by_experiencias/{idexperiencia:[0-9]+}", "ControladorApi:listar_mecanicas_experiencias")->setName('Api');
-    $app->get("/listar_mecanicas_byespacios/{idexperiencia:[0-9]+}", "ControladorApi:listar_mecanicas_experienciasbyespacios")->setName('Api');
-
-    $app->get("/listado_clientes", "ControladorApi:listado_clientes")->setName('Api');
-    $app->post("/login", "ControladorApi:login")->setName('Api');
-    $app->get("/listar_atributos/{idexperiencia:[0-9]+}", "ControladorApi:listar_atributos_mecanicas")->setName('Api');
-     
-    /**eventos */
-    $app->post("/search_events", "ControladorApi:search_events")->setName('Api');
-    $app->post("/insert_events", "ControladorApi:insert_events")->setName('Api');
-
-    $app->get("/change_estado_inicio", "ControladorApi:change_estado_inicio")->setName('Api');
-
-    $app->get("/valid_date_experience/{idexperience}", "ControladorApi:validar_fecha_finalizacion_experiencia")->setName('Api');
-
+$app->group('/bot', function (RouteCollectorProxy $app) { 
+    $app->get('', "ControladorBot:load_bot")->setName('BOT');  
+    $app->post('/start', "ControladorBot:bot_funcionalidad")->setName('Excepciones');  
+    $app->get('/plantilla', "ControladorBot:plantilla")->setName('Excepciones'); 
     
+    /**menus dinamicos del bot */
+    $app->get("/create_bot", "ControladorMenuBot:index");
+    $app->get('/lineas_valle', "ControladorMenuBot:index_menu_valle"); 
+    $app->post("/add_menu", "ControladorMenuBot:upload_files_audios_images");
+    $app->post("/save_menu", "ControladorMenuBot:guarda_menu")->setName('SaveMenu');
+    $app->get("/get_item/{iditem:[0-9]+}", "ControladorMenuBot:get_item")->setName('Excepciones');  
+    $app->post("/menu_del", "ControladorMenuBot:delete_menu");
+    $app->post("/editar_menu", "ControladorMenuBot:edit_menu");    
 
+    $app->get('/productos_bot/{idcliente:[0-9]+}/{categoria:[0-9]+}', "ControladorMenuBot:lista_producto")->setName('Catalogo');  
+    $app->get('/pruebas', "ControladorBot:prueba")->setName('BOT'); 
 });
-

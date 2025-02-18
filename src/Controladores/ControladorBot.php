@@ -5,7 +5,7 @@ namespace App\Controladores;
 use DI\Container;
 use App\Modelos\ModeloUsuarios as Usuarios;
 use App\Modelos\ModeloEstados as Estados;
-
+use App\Controladores\OnboardingConversation as BotChat;
 
 use Slim\Views\Twig; // Las vistas de la aplicación
 use Slim\Router; // Las rutas de la aplicación
@@ -20,6 +20,12 @@ use Slim\Routing\RouteContext;
 use Carbon\Carbon;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use BotMan\BotMan\BotManFactory;
+use BotMan\BotMan\Drivers\DriverManager;
+use Doctrine\Common\Cache\FilesystemCache;
+use BotMan\BotMan\Cache\SymfonyCache;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+
 
 
 /**
@@ -64,6 +70,16 @@ class ControladorBot
 		]);
 	}
 
+	public function load_bot(Request $request, Response $response, $args)
+    {
+        return Twig::fromRequest($request)->render($response, 'bot/test_bot.twig');
+    }
+
+	public function plantilla(Request $request, Response $response, $args)
+    {
+        return Twig::fromRequest($request)->render($response, 'bot/plantilla_chat.twig');
+    }
+
 
 	public function save_edit(Request $request, Response $response, $args)
 	{
@@ -107,6 +123,30 @@ class ControladorBot
 		}
 	}
 
+    public function bot_funcionalidad(Request $request, Response $response, $args)
+    {
+        $param = $request->getParsedBody();
+        
+        DriverManager::loadDriver(\BotMan\Drivers\Web\WebDriver::class);
+        // Configurar caché
+        $adapter = new FilesystemAdapter();
+        $cache = new SymfonyCache($adapter);
 
+        $config = [
+            'user_cache_time' => 40,
+            'config' => [
+                'conversation_cache_time' => 40,
+            ]
+        ];
+        
+        // Crear instancia de BotMan
+        $botman = BotManFactory::create($config, $cache);      
+        $botman->hears('.*|menu|MENU|Menu', function ($bot) {
+            $bot->startConversation(new BotChat);
+        });
+
+        $botman->listen();
+        return $response->withStatus(200);
+    }
 
 }

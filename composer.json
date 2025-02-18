@@ -1,6 +1,8 @@
 {
     "require": {
         "cache/doctrine-adapter": "^1.2",
+        "botman/botman": "^2.0",
+        "botman/driver-web": "^1.0",
         "cartalyst/sentinel": "^7.0",
         "cron/cron": "^1.4",
         "doctrine/cache": "^1.10",

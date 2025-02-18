@@ -51,7 +51,8 @@ $app->add(function (Request $request, RequestHandler $handler) {
         'Token',
         'Permisos',
         'Newpass',
-        'RegisterUserForm'
+        'RegisterUserForm',
+        'BOT'
     );
 
     if (in_array($routeName, $publicRoutesArray)) { //rutas publicas permitidas     

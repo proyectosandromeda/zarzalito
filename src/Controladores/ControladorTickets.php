@@ -58,6 +58,7 @@ class ControladorTickets
 			'tickets.name',
 			'tickets.id',
 			'tickets.problem',
+			'tickets.phone',
 			'tickets.created_at as fecha',
 			'state_tickets.description as estado',
 			DB::raw('(concat(users.first_name," ",users.last_name)) as responsable')
@@ -78,25 +79,31 @@ class ControladorTickets
 			->when(
 				$_GET['columns'][2]['search']['value'] != '',
 				function ($q) {
-					return $q->where('tickets.problem', 'LIKE', "%" . $_GET['columns'][2]['search']['value'] . "%");
+					return $q->where('tickets.phone', 'LIKE', "%" . $_GET['columns'][2]['search']['value'] . "%");
 				}
 			)
 			->when(
 				$_GET['columns'][3]['search']['value'] != '',
 				function ($q) {
-					return $q->whereraw('cast(tickets.created_at as date) LIKE "%' . $_GET['columns'][3]['search']['value'] . '%"');
+					return $q->where('tickets.problem', 'LIKE', "%" . $_GET['columns'][3]['search']['value'] . "%");
 				}
 			)
 			->when(
 				$_GET['columns'][4]['search']['value'] != '',
 				function ($q) {
-					return $q->where('state_tickets.description', 'LIKE', "%" . $_GET['columns'][4]['search']['value'] . "%");
+					return $q->whereraw('cast(tickets.created_at as date) LIKE "%' . $_GET['columns'][4]['search']['value'] . '%"');
 				}
 			)
 			->when(
 				$_GET['columns'][5]['search']['value'] != '',
 				function ($q) {
-					return $q->where('users.first_name', 'LIKE', "%" . $_GET['columns'][5]['search']['value'] . "%");
+					return $q->where('state_tickets.description', 'LIKE', "%" . $_GET['columns'][5]['search']['value'] . "%");
+				}
+			)
+			->when(
+				$_GET['columns'][6]['search']['value'] != '',
+				function ($q) {
+					return $q->where('users.first_name', 'LIKE', "%" . $_GET['columns'][6]['search']['value'] . "%");
 				}
 			)
 			->orderby('tickets.created_at', 'DESC')
