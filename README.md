@@ -34,7 +34,14 @@ SweetAlert2 para alertas personalizadas.
     composer install
     ```
 
-3. Configura las variables de entorno copiando el archivo `.env.example` a [.env](http://_vscodecontentref_/9) y ajustando los valores según sea necesario.
+3. Configura las variables de entorno copiando el archivo `.env.example` a [.env](http://_vscodecontentref_/7) y ajustando los valores según sea necesario. Aquí están las variables que necesitas configurar:
+
+    ```env
+    HOST_BD_MYSQL=tu_host
+    BD_MYSQL=tu_base_de_datos
+    USER_BD_MYSQL=tu_usuario
+    PASS_BD_MYSQL=tu_contraseña
+    ```
 
 4. Ejecuta las migraciones de la base de datos:
     ```sh
@@ -50,3 +57,4 @@ php -S localhost:8000 -t public
 
 ## Licencia
 Este proyecto está licenciado bajo la MIT License.
+````
