@@ -6,10 +6,10 @@ Este proyecto es una aplicación web que utiliza varias tecnologías y bibliotec
 
 ## Estructura del Proyecto
 Estructura de Directorios  
-config/: Contiene archivos de configuración para la aplicación.  
-public/: Contiene los archivos públicos accesibles desde el navegador, incluyendo index.php que es el punto de entrada de la aplicación.  
-src/: Contiene el código fuente de la aplicación, incluyendo controladores y modelos.  
-templates/: Contiene las plantillas Twig para la vista.  
+*config/:* Contiene archivos de configuración para la aplicación.  
+*public/:* Contiene los archivos públicos accesibles desde el navegador, incluyendo index.php que es el punto de entrada de la aplicación.  
+*src/:* Contiene el código fuente de la aplicación, incluyendo controladores y modelos.  
+*templates/:* Contiene las plantillas Twig para la vista.  
 vendor/: Contiene las dependencias instaladas por Composer.  
 
 Dependencias
