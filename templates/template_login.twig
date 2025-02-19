@@ -43,7 +43,7 @@
 					
 					{{ csrf_field() | raw }}
 					<div class="forgot-password">
-						<a href="#">¿Olvidaste la contraseña?</a>
+						<a href="{{ base_path() }}/login/new_pass">¿Olvidaste la contraseña?</a>
 					</div>
 
 					<button type="submit" class="btn-login">Iniciar sesión</button>

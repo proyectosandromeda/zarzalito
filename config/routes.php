@@ -30,7 +30,7 @@ $app->group('/login', function (RouteCollectorProxy $app) {
     $app->get('/new_pass', "ControladorLogin:index_new_pass")->setName('Newpass');
     $app->post('/generate_pass', "ControladorLogin:new_pass")->setName('Excepciones');
     $app->get('/reset_pass/{code}/{iduser:[0-9]+}', "ControladorLogin:template_entry_new_pass")->setName('Excepciones');
-    $app->post('/change_pass', "ControladorLogin:active_pass_reminder")->setName('Excepciones');
+    //$app->post('/change_pass', "ControladorLogin:active_pass_reminder")->setName('Excepciones');
 })->add('csrf');
 
 

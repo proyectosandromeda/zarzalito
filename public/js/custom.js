@@ -477,6 +477,8 @@ $(document).ready(function () {
         let datos = procesa_datos_data('get', `${BaseUrl.ajaxurl}/tickets/get_ticket/${idtext}`, {})
         datos.done(function (r) {
             $('textarea[name="textinfo"]').text(r.problem)
+            $('textarea[name="textcoment"]').text(r.comments)
+            
         })
         $('#modal_edit_tickets').modal('show')
     })

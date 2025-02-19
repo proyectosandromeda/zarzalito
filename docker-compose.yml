@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  web:
+    image: php:8.3-apache
+    container_name: zarzalito_web
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8000:80"
+    environment:
+      HOST_BD_MYSQL: ${HOST_BD_MYSQL}
+      BD_MYSQL: ${BD_MYSQL}
+      USER_BD_MYSQL: ${USER_BD_MYSQL}
+      PASS_BD_MYSQL: ${PASS_BD_MYSQL}
+
+  db:
+    image: mysql:8.0
+    container_name: zarzalito_db
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${PASS_BD_MYSQL}
+      MYSQL_DATABASE: ${BD_MYSQL}
+      MYSQL_USER: ${USER_BD_MYSQL}
+      MYSQL_PASSWORD: ${PASS_BD_MYSQL}
+    ports:
+      - "3306:3306"
+
+volumes:
+  db_data:

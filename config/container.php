@@ -23,6 +23,9 @@ use Symfony\Component\Translation\Loader\ArrayLoader;
 use Symfony\Component\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Cartalyst\Sentinel\Native\Facades\Sentinel;
+use Symfony\Component\Dotenv\Dotenv;
+$dotenv = new Dotenv();
+$dotenv->load('../.env');
 
 /** @var \Slim\App $app */
 $responseFactory = $app->getResponseFactory();
@@ -130,15 +133,15 @@ $container->set('mailer', function (Container $container) {
 
     $view = $container->get('view');
     $mailer = new \Semhoun\Mailer\Mailer($view, [
-        'host' => 'mail.grupointec.co',  // SMTP Host
-        'port' => '465',  // SMTP Port
-        'username' => 'notificaciones@grupointec.co',  // SMTP Username
-        'password' => 'm(Ao&8TTQYTo',  // SMTP Password
+        'host' => $_ENV['MAIL_HOST'],  // SMTP Host
+        'port' => $_ENV['MAIL_PORT'],  // SMTP Port
+        'username' => $_ENV['MAIL_USER'],  // SMTP Username
+        'password' => $_ENV['MAIL_PASS'],  // SMTP Password
         'protocol' => 'SSL'   // SSL or TLS
     ]);
 
     // Set the details of the default sender
-    $mailer->setDefaultFrom('notificaciones@grupointec.co', 'Webmaster');
+    $mailer->setDefaultFrom($_ENV['MAIL_USER'], 'Webmaster');
 
     return $mailer;
 });

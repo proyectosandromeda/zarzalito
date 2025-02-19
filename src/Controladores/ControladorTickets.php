@@ -127,7 +127,9 @@ class ControladorTickets
 
 	public function get_ticket(Request $request, Response $response, $args)
 	{
-		$ticket = DB::table('tickets')->find($args['idticket']);
+		$ticket = DB::table('tickets')->leftJoin('observations', 'observations.tickets_id', '=', 'tickets.id')
+			->where('tickets.id', $args['idticket'])
+			->first();
 		return $response->withStatus(200)->withJson($ticket);
 	}
 
@@ -142,6 +144,24 @@ class ControladorTickets
 					'state_tickets_id' => $param['estado'],
 					'users_id' => $_SESSION['idusuario']
 				]);
+
+				$commet = DB::table('tickets')->join('observations', 'observations.tickets_id', '=', 'tickets.id')
+					->where('tickets.id', $param['idtickets'])
+					->first();
+
+				if ($commet) {
+					DB::table('observations')
+						->where('tickets_id', $param['idtickets'])
+						->update([
+							'observations.comments' => $param['textcoment']
+						]);
+				} else {
+					DB::table('observations')->insert([
+						'tickets_id' => $param['idtickets'],
+						'comments' => $param['textcoment']
+					]);
+				}
+
 
 				return $response->withStatus(200)->withJson([
 					'succes' => true,

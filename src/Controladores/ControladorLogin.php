@@ -3,7 +3,7 @@
 namespace App\Controladores;
 
 use DI\Container;
-use App\Modelos\ModeloUsuario as Usuario; // para usar el modelo de usuario
+use App\Modelos\ModeloUsuarios as Usuario; // para usar el modelo de usuario
 use App\Modelos\ModeloUserClientes as UserClientes;
 use App\Modelos\ModeloClientes as Clientes;
 
@@ -40,10 +40,10 @@ class ControladorLogin
 	 * @param type Slim\Router $router - Ruta
 	 */
 	/*public function __construct( Router $router)
-	   {
-		   
-		   $this->router = $router;
-	   }*/
+			 {
+				 
+				 $this->router = $router;
+			 }*/
 
 	protected $container;
 	public function __construct(Container $container, TranslatorInterface $translator, Sentinel $sentinel)
@@ -78,7 +78,7 @@ class ControladorLogin
 		//Sentinel::logout();
 
 		try {
-			
+
 			$data = Sentinel::authenticate(
 				array(
 					'email' => $param['email'],
@@ -89,11 +89,11 @@ class ControladorLogin
 			if (empty($data->id)) {
 				$this->flash->addMessage('error', 'La contraseña es incorrectas');
 				$url = $routeParser->urlFor('Login');
-				
+
 				return $response->withRedirect($url);
 
 			} else {
-				$rol = Sentinel::findById($data->id)->roles()->first();				
+				$rol = Sentinel::findById($data->id)->roles()->first();
 				$_SESSION['idusuario'] = $data->id;
 				$_SESSION['rol'] = $rol->id;
 				$_SESSION['nombre'] = $data->first_name;
@@ -129,7 +129,12 @@ class ControladorLogin
 	public function index_new_pass(Request $request, Response $response, $args)
 	{
 
-		return Twig::fromRequest($request)->render($response, 'template_login_reset.twig');
+		return Twig::fromRequest($request)->render($response, 'usuarios/template_login_reset.twig');
+	}
+
+	function generarContrasenaSegura($length = 8)
+	{
+		return substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()'), 0, $length);
 	}
 
 	public function new_pass(Request $request, Response $response, $args)
@@ -137,22 +142,25 @@ class ControladorLogin
 		$param = $request->getParsedBody();
 		$routeParser = RouteContext::fromRequest($request)->getRouteParser();
 
-		$data_user = Usuario::select('email', 'id', 'first_name')->where('email', $param['email'])->first();
-
-		if ($data_user->email) {
-
-			$users = Sentinel::findById($data_user->id);
-			$reminder = Sentinel::getReminderRepository()->create($users);
+		$user = Sentinel::findByCredentials(['login' => $param['email']]);
+		if ($user) {
+			$contra = $this->generarContrasenaSegura(8);
+			Sentinel::update($user, ['password' => $contra]);
 
 			//envia correo de activacion
-			$this->container->get('mailer')->sendMessage('emails/restaurar_contrasena.twig', ['user' => $reminder, 'activation' => $activation], function ($message) use ($param, $data_user) {
-				$message->setTo($data_user->email, $data_user->first_name);
-				$message->setSubject('Recordatorio de contraseña ' . $data_user->first_name);
-			});
+			try {
+				$this->container->get('mailer')->sendMessage('emails/restaurar_contrasena.twig', ['pass' => $contra], function ($message) use ($param ) {
+					$message->setTo($param["email"], "Restaurar contraseña");
+					$message->setSubject('Recordatorio de contraseña ');
+				});
+
+			} catch (\Throwable $th) {
+				//throw $th;
+			}
 
 
 			$url = $routeParser->urlFor('Login');
-			return $response->withJson([
+			return $response->withStatus(200)->withJson([
 				'succes' => true,
 				'tipo' => 'success',
 				'message' => 'El email fue enviado con éxito, por favor verifique la bandeja de entrada de su correo eléctronico.',
