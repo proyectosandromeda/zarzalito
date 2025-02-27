@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 19-02-2025 a las 23:15:18
+-- Tiempo de generación: 27-02-2025 a las 19:55:22
 -- Versión del servidor: 8.0.41-0ubuntu0.22.04.1
 -- Versión de PHP: 8.2.27
 
@@ -146,7 +146,8 @@ INSERT INTO `persistences` (`id`, `user_id`, `code`, `created_at`, `updated_at`)
 (39, 1, 'L4itXB7MACqkZTMIESrheGG9muF9uG25', '2025-02-11 20:14:03', '2025-02-11 20:14:03'),
 (41, 1, 'j76k1tJA1nCHxuw6gtQMzxyDo2VICIVr', '2025-02-17 14:26:23', '2025-02-17 14:26:23'),
 (44, 15, 'H3UfYvJQxGHtTB4jBkxSKzqV3tdWfCO5', '2025-02-17 20:25:28', '2025-02-17 20:25:28'),
-(46, 1, 'cz1kBvd1MEHA9WyRMaQpYfhBxRsqkda0', '2025-02-19 14:39:20', '2025-02-19 14:39:20');
+(46, 1, 'cz1kBvd1MEHA9WyRMaQpYfhBxRsqkda0', '2025-02-19 14:39:20', '2025-02-19 14:39:20'),
+(49, 1, '32bQmTMhwk27OMgmjTjvXjbfNycB7sRH', '2025-02-20 16:08:13', '2025-02-20 16:08:13');
 
 -- --------------------------------------------------------
 
@@ -207,15 +208,6 @@ CREATE TABLE `role_users` (
 
 INSERT INTO `role_users` (`id`, `user_id`, `role_id`, `created_at`, `updated_at`) VALUES
 (1, 1, 1, '2025-02-05 20:25:17', '2025-02-05 20:25:17'),
-(3, 4, 2, '2025-02-10 19:28:37', '2025-02-10 19:28:37'),
-(4, 5, 2, '2025-02-10 19:29:19', '2025-02-10 19:29:19'),
-(5, 6, 2, '2025-02-10 19:29:43', '2025-02-10 19:29:43'),
-(6, 7, 1, '2025-02-10 19:31:37', '2025-02-10 19:31:37'),
-(7, 8, 2, '2025-02-10 19:32:52', '2025-02-10 19:32:52'),
-(8, 9, 1, '2025-02-10 19:35:08', '2025-02-10 19:35:08'),
-(9, 10, 2, '2025-02-10 19:36:32', '2025-02-10 19:36:32'),
-(10, 11, 2, '2025-02-10 19:36:56', '2025-02-10 19:36:56'),
-(11, 12, 2, '2025-02-10 19:38:19', '2025-02-10 19:38:19'),
 (12, 13, 2, '2025-02-17 19:24:23', '2025-02-17 19:24:23'),
 (13, 14, 2, '2025-02-17 19:24:46', '2025-02-17 19:24:46'),
 (15, 15, 1, '2025-02-17 19:25:37', '2025-02-17 19:25:37');
@@ -363,7 +355,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `password`, `permissions`, `last_login`, `first_name`, `last_name`, `created_at`, `updated_at`) VALUES
-(1, 'mail@correo.com', '$2y$10$sPateoIW1BaTdGsu9rRVMOY6x.10c2c9kqxbiqQH2luCMDHyruAt2', NULL, '2025-02-19 22:52:00', 'prueba', 'pruebita', '2025-02-05 20:04:18', '2025-02-19 22:52:00'),
+(1, 'mail@correo.com', '$2y$10$sPateoIW1BaTdGsu9rRVMOY6x.10c2c9kqxbiqQH2luCMDHyruAt2', NULL, '2025-02-26 14:44:43', 'prueba', 'pruebita', '2025-02-05 20:04:18', '2025-02-26 14:44:43'),
 (13, 'rivera.jorge@correounivalle.edu.co', '$2y$10$/PaIdnh23RynNGSY0wznbudLv0X/txoaRZizU26pXcDB6bDBnF7jS', NULL, NULL, 'Jorge Antonio ', 'Rivera ', '2025-02-17 19:24:23', '2025-02-17 19:24:23'),
 (14, 'einer.zamora@correounivalle.edu.co', '$2y$10$uSNoIs/fuG1xIRigi8Y3B.8SJ2O5a4yWOAFtkP5sfSfTJQdxaOaj.', NULL, NULL, 'Alejandro ', 'Zamora', '2025-02-17 19:24:46', '2025-02-17 19:24:46'),
 (15, 'informatica@zarzal-valle.gov.co', '$2y$10$b/jHdHZt/JYAS0nc5M7ejOifgR27rQMhLwzLKuZET97Q.qsvSGkmS', NULL, '2025-02-17 20:25:28', ' Carlos Manuel ', 'Nuñez Diaz', '2025-02-17 19:25:11', '2025-02-19 22:59:16');
@@ -501,7 +493,7 @@ ALTER TABLE `observations`
 -- AUTO_INCREMENT de la tabla `persistences`
 --
 ALTER TABLE `persistences`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT de la tabla `reminders`
