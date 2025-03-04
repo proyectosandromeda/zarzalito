@@ -2,23 +2,44 @@ version: '3.8'
 
 services:
   web:
-    image: php:8.3-apache
-    container_name: zarzalito_web
+    image: php:8.2-apache
+    container_name: zarzalito_app
+    restart: always
+    user: root
     volumes:
-      - .:/var/www/html
+      - ./:/var/www/html
     ports:
-      - "8000:80"
+      - "8080:80"
     environment:
-      HOST_BD_MYSQL: ${HOST_BD_MYSQL}
+      HOST_BD_MYSQL: db
       BD_MYSQL: ${BD_MYSQL}
       USER_BD_MYSQL: ${USER_BD_MYSQL}
       PASS_BD_MYSQL: ${PASS_BD_MYSQL}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASS: ${MAIL_PASS}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+    depends_on:
+      - db
+      - superset
+    entrypoint: >
+      bash -c "apt-get update && 
+               apt-get install -y libmemcached-dev zlib1g-dev libzip-dev unzip libpq-dev &&
+               docker-php-ext-install zip pdo pdo_mysql &&
+               pecl install memcached &&
+               docker-php-ext-enable memcached &&
+               a2enmod rewrite &&
+               curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer &&
+               cd /var/www/html &&
+               composer install --no-interaction --prefer-dist &&
+               apache2-foreground"
 
   db:
     image: mysql:8.0
     container_name: zarzalito_db
+    restart: always
     volumes:
-      - db_data:/var/lib/mysql
+      - mysql-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${PASS_BD_MYSQL}
       MYSQL_DATABASE: ${BD_MYSQL}
@@ -27,5 +48,31 @@ services:
     ports:
       - "3306:3306"
 
+  superset:
+    image: apache/superset
+    container_name: zarzalito_superset
+    restart: always
+    user: root  # Ejecutar como root temporalmente para instalar dependencias
+    environment:
+      SUPERSET_SECRET_KEY: "supersecret"
+      DATABASE_DB: "superset"
+      DATABASE_USER: "superset"
+      DATABASE_PASSWORD: "supersetpassword"
+      DATABASE_HOST: "db"
+      FLASK_ENV: "production"
+      GUNICORN_TIMEOUT: 120
+    ports:
+      - "8088:8088"
+    volumes:
+      - superset-data:/app/superset_home
+    depends_on:
+      - db
+    entrypoint: >
+      sh -c "apt-get update && apt-get install -y pkg-config python3-dev default-libmysqlclient-dev build-essential default-libmysqlclient-dev && pip install mysqlclient &&
+             pip install --no-cache-dir --upgrade pip setuptools wheel && superset db upgrade && superset fab create-admin --username admin --firstname Admin --lastname User --email admin@example.com --password admin &&
+             superset init &&
+             gunicorn --workers 4 --timeout 120 --bind 0 'superset.app:create_app()'"
+
 volumes:
-  db_data:
+  mysql-data:
+  superset-data:
