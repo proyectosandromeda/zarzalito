@@ -64,7 +64,7 @@ $container->set(TranslatorInterface::class, function (Container $container) {
     return $translator;
 });
 
-$$container->set('csrf', function () use ($responseFactory) {
+$container->set('csrf', function () use ($responseFactory) {
     //return new Guard($responseFactory);
     $guard = new Guard($responseFactory);
     $guard->setFailureHandler(function (Request $request, RequestHandlerInterface $handler) {
