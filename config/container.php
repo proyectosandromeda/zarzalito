@@ -26,6 +26,7 @@ use Cartalyst\Sentinel\Native\Facades\Sentinel;
 use Symfony\Component\Dotenv\Dotenv;
 $dotenv = new Dotenv();
 $dotenv->load('../.env');
+$capsule = new Capsule;
 
 /** @var \Slim\App $app */
 $responseFactory = $app->getResponseFactory();
@@ -63,7 +64,7 @@ $container->set(TranslatorInterface::class, function (Container $container) {
     return $translator;
 });
 
-$container->set('csrf', function () use ($responseFactory) {
+$$container->set('csrf', function () use ($responseFactory) {
     //return new Guard($responseFactory);
     $guard = new Guard($responseFactory);
     $guard->setFailureHandler(function (Request $request, RequestHandlerInterface $handler) {
@@ -79,7 +80,7 @@ $container->set('csrf', function () use ($responseFactory) {
 
 
             if (in_array($routeName, $authorize_route)) {
-                return $next($request, $response);
+                return $handler->handle($request);
             }
 
             $url = $routeParser->urlFor('Permisos');
@@ -87,7 +88,7 @@ $container->set('csrf', function () use ($responseFactory) {
 
 
         } else {
-            return $next($request, $response);
+            return $handler->handle($request);
         }
 
         //$handler->handle($request);
@@ -104,10 +105,6 @@ $container->set('flash', function () {
 });
 
 
-$container->set('reminder', function (Container $container) {
-
-    return new \Cartalyst\Sentinel\Reminders\IlluminateReminderRepository($user);
-});
 
 
 $container->set('view', function (Container $container) use ($app) {

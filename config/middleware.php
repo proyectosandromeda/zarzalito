@@ -33,52 +33,53 @@ use App\Controladores\HttpNotFoundExceptionf;
 
 $app->add(function (Request $request, RequestHandler $handler) {
 
-    $response = $handler->handle($request);
     $routeContext = RouteContext::fromRequest($request);
-    $routeParser = RouteContext::fromRequest($request)->getRouteParser();
+    $routeParser = $routeContext->getRouteParser();
     $route = $routeContext->getRoute();
-    $routeName = $route->getName();
+    $routeName = $route ? $route->getName() : null;
 
-    //print_r($user2);
-    $publicRoutesArray = array(
+    $publicRoutesArray = [
         'Login',
         'register',
         'Ingreso',
         'login/new_pass',
-        'login/ingreso',
-        'Api',
+        'login/ingreso',        
         'Excepciones',
         'Token',
         'Permisos',
-        'Newpass',
-        'RegisterUserForm',
-        'BOT'
-    );
+        'Newpass',        
+        'Salida'
+    ];
 
-    if (in_array($routeName, $publicRoutesArray)) { //rutas publicas permitidas     
-        return $response;
-    } else {
+    // Si la ruta es pública, permitir la solicitud
+    if (in_array($routeName, $publicRoutesArray)) {
+        return $handler->handle($request);
+    }
 
-        if (Sentinel::check()) {
-
-            $path = substr($request->getUri()->getPath(), 1);
-            $new_rol = Sentinel::findRoleById($_SESSION['rol']);
-            $permisos = array_keys($new_rol->permissions);
-            //echo $path;
-            //print_r($permisos);
-            // exit();
-            if (Sentinel::hasAnyAccess($path) || in_array($routeName, $publicRoutesArray) || in_array($routeName, $permisos)) {
-                return $response;
-            } else {
-                //echo $routeName;
-                $url = $routeParser->urlFor('Permisos');                
-                return $response->withRedirect($url);
-            }
-        }
-
+    // Si el usuario no está autenticado, detener la ejecución inmediatamente
+    if (!Sentinel::check()) {
+        $response = $handler->handle($request);
+     
         $url = $routeParser->urlFor('Login');
         return $response->withRedirect($url);
     }
+
+    // Obtener permisos del usuario
+    $path = substr($request->getUri()->getPath(), 1);
+    $new_rol = Sentinel::findRoleById($_SESSION['rol']);
+    $permisos = array_keys($new_rol->permissions);
+
+    // Verificar permisos, si no tiene acceso, detener ejecución
+    if (!Sentinel::hasAnyAccess($path) && !in_array($routeName, $permisos)) {
+        $response = new Response();
+        $response->getBody()->write(json_encode([
+            'error' => 'Acceso no autorizado'
+        ]));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+    }
+
+    // Si el usuario tiene permisos, procesar la solicitud
+    return $handler->handle($request);
 });
 
 $app->add(SessionStartMiddleware::class);
