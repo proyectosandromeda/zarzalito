@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   web:
@@ -46,7 +45,32 @@ services:
       MYSQL_USER: ${USER_BD_MYSQL}
       MYSQL_PASSWORD: ${PASS_BD_MYSQL}
     ports:
-      - "3306:3306"
+      - "3307:3306"
+
+  superset:
+    image: apache/superset
+    container_name: zarzalito_superset
+    restart: always
+    user: root  # Ejecutar como root temporalmente para instalar dependencias
+    environment:
+      SUPERSET_SECRET_KEY: "supersecret"
+      DATABASE_DB: "superset"
+      DATABASE_USER: "superset"
+      DATABASE_PASSWORD: "supersetpassword"
+      DATABASE_HOST: "db"
+      FLASK_ENV: "production"
+      GUNICORN_TIMEOUT: 120
+    ports:
+      - "8088:8088"
+    volumes:
+      - superset-data:/app/superset_home
+    depends_on:
+      - db
+    entrypoint: >
+      sh -c "apt-get update && apt-get install -y pkg-config python3-dev default-libmysqlclient-dev build-essential default-libmysqlclient-dev && pip install mysqlclient &&
+             pip install --no-cache-dir --upgrade pip setuptools wheel && superset db upgrade && superset fab create-admin --username admin --firstname Admin --lastname User --email admin@example.com --password admin &&
+             superset init &&
+             gunicorn --workers 4 --timeout 120 --bind 0 'superset.app:create_app()'"
 
   superset:
     image: apache/superset
@@ -75,4 +99,8 @@ services:
 
 volumes:
   mysql-data:
+<<<<<<< HEAD
   superset-data:
+=======
+  superset-data:
+>>>>>>> 306c784 (actualizacion de BD)

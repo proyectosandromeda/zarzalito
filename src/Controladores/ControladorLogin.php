@@ -147,7 +147,7 @@ class ControladorLogin
 			$contra = $this->generarContrasenaSegura(8);
 			Sentinel::update($user, ['password' => $contra]);
 
-			//envia correo de activacion
+			//envia correo con la contraseña
 			try {
 				$this->container->get('mailer')->sendMessage('emails/restaurar_contrasena.twig', ['pass' => $contra], function ($message) use ($param ) {
 					$message->setTo($param["email"], "Restaurar contraseña");
@@ -174,7 +174,7 @@ class ControladorLogin
 			//$this->flash->addMessage('error', "El email falló, por favor verifique su conexión."); 
 			$url = $routeParser->urlFor('Login');
 			//return $response->withRedirect($url);
-			return $response->withJson([
+			return $response->withStatus(200)->withJson([
 				'succes' => true,
 				'tipo' => 'error',
 				'promp' => 1,
