@@ -100,7 +100,7 @@ SweetAlert2 para alertas personalizadas.
     USER_BD_MYSQL=tu_usuario
     PASS_BD_MYSQL=tu_contraseña
     
-    DOMAIN_SITE="url del doinio"
+    DOMAIN_SITE="url del dominio"
 
     EMAIL_HOST=smtp.tu_proveedor_email.com
     EMAIL_PORT=587
@@ -142,7 +142,7 @@ La solución consta de dos componentes principales:
 
 ## Instalación del Widget
 
-1. Copia el siguiente código en la página HTML donde deseas mostrar el bot:
+1. Copia el siguiente código en la página HTML donde deseas mostrar el bot cambiando la url donde se alojo la aplicacion:
 
 ```html
 <style>
