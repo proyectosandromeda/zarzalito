@@ -105,11 +105,6 @@ $container->set('flash', function () {
 });
 
 
-$container->set('reminder', function (Container $container) {
-
-    return new \Cartalyst\Sentinel\Reminders\IlluminateReminderRepository($user);
-});
-
 
 $container->set('view', function (Container $container) use ($app) {
 

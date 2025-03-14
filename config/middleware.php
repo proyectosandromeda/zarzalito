@@ -36,7 +36,7 @@ $app->add(function (Request $request, RequestHandler $handler) {
     $routeContext = RouteContext::fromRequest($request);
     $routeParser = $routeContext->getRouteParser();
     $route = $routeContext->getRoute();
-    $routeName = $route->getName();
+    $routeName = $route ? $route->getName() : null;
 
     $publicRoutesArray = [
         'Login',
@@ -47,31 +47,24 @@ $app->add(function (Request $request, RequestHandler $handler) {
         'Excepciones',
         'Token',
         'Permisos',
-        'Newpass',
-        'RegisterUserForm',
-        'BOT'
-    );
+        'Newpass',        
+        'Salida'
+    ];
 
-    if (in_array($routeName, $publicRoutesArray)) { //rutas publicas permitidas     
-        return $response;
-    } else {
+    // Si la ruta es pública, permitir la solicitud
+    if (in_array($routeName, $publicRoutesArray)) {
+        return $handler->handle($request);
+    }
 
-        if (Sentinel::check()) {
-
-            $path = substr($request->getUri()->getPath(), 1);
-            $new_rol = Sentinel::findRoleById($_SESSION['rol']);
-            $permisos = array_keys($new_rol->permissions);
-            //echo $path;
-            //print_r($permisos);
-            // exit();
-            if (Sentinel::hasAnyAccess($path) || in_array($routeName, $publicRoutesArray) || in_array($routeName, $permisos)) {
-                return $response;
-            } else {
-                //echo $routeName;
-                $url = $routeParser->urlFor('Permisos');                
-                return $response->withRedirect($url);
-            }
-        }
+    // Si el usuario no está autenticado, detener la ejecución inmediatamente
+    if (!Sentinel::check()) {
+        $response = $handler->handle($request);
+        //$response = new Response();
+        /*        $response->getBody()->write(json_encode([
+                    'error' => 'No autenticado',
+                    'redirect' => $routeParser->urlFor('Login')
+                ]));*/
+        //return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
 
         $url = $routeParser->urlFor('Login');
         return $response->withRedirect($url);
