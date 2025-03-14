@@ -20,6 +20,7 @@
 					<th>Fecha</th>
 					<th>Estado</th>
 					<th>Responsable</th>
+					<th>Resuelto</th>
 					<th>Acciones</th>
 				</tr>
 			</thead>
@@ -28,7 +29,7 @@
 	</div>
 
 	<div class="modal fade" id="modal_edit_tickets" aria-labelledby="modal_edit_tickets" aria-hidden="true">
-		<div class="modal-dialog ">
+		<div class="modal-dialog modal-xl">
 			<form method="post" action="{{url_for('SaveTikect')}}">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -38,15 +39,23 @@
 					<div class="modal-body">
 
 						<div class="row">
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label for="rol" class="form-label ">Descrición del problema</label>
+									<p class="textinfo text-black"></p>
+								</div>
+							</div>
 
-							<div class="mb-3">
-								<label for="rol" class="form-label ">Descrición del problema</label>
-								<textarea class="form-control" name="textinfo" id="" rows="8" disabled></textarea>
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label for="rol" class="form-label ">Historial</label>
+									<textarea class="form-control" name="textcoment" id="" rows="8" readonly></textarea>
+								</div>
 							</div>
 
 							<div class="mb-3">
 								<label for="rol" class="form-label required">Comentario</label>
-								<textarea class="form-control" name="textcoment" id="" rows="8" required ></textarea>
+								<textarea class="form-control" name="comentario" id="" rows="8" required></textarea>
 							</div>
 
 							<div class="mb-3">

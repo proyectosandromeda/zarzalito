@@ -5,7 +5,8 @@ namespace App\Controladores;
 use DI\Container;
 use App\Modelos\ModeloUsuarios as Usuarios;
 use App\Modelos\ModeloEstados as Estados;
-
+use App\Modelos\ModeloObservaciones as Observaciones;
+use App\Modelos\ModeloTickets as Tickets;
 
 use Slim\Views\Twig; // Las vistas de la aplicación
 use Slim\Router; // Las rutas de la aplicación
@@ -45,25 +46,26 @@ class ControladorTickets
 	/*-- Funciones del CRUD --*/
 	public function index(Request $request, Response $response, $args)
 	{
-		$estados = DB::table('state_tickets')->get();
+		$estados = DB::table('state_tickets')->orderBy('description', 'asc')->get();
 		return Twig::fromRequest($request)->render($response, 'tickets/tickets.twig', ["estados" => $estados]);
 	}
 
 	public function all_tickets(Request $request, Response $response, $args)
 	{
 
-		$total = DB::table('tickets')->count();
-		$data = DB::table('tickets')->select(
+		$total = Tickets::count();
+		$data = Tickets::select(
 			'tickets.area',
 			'tickets.name',
 			'tickets.id',
 			'tickets.problem',
 			'tickets.phone',
 			'tickets.created_at as fecha',
-			'state_tickets.description as estado',
-			DB::raw('(concat(users.first_name," ",users.last_name)) as responsable')
-		)->join('state_tickets', 'state_tickets.id', '=', 'tickets.state_tickets_id')
-			->leftJoin('users', 'users.id', '=', 'tickets.users_id')
+			DB::raw('(select state_tickets.description from observations inner join state_tickets on (observations.state_tickets_id = state_tickets.id) where tickets_id = tickets.id order by  observations.id desc limit 1) as estado'),
+			DB::raw('(select observations.created_at from observations inner join state_tickets on (observations.state_tickets_id = state_tickets.id) where tickets_id = tickets.id and state_tickets_id = 2 order by observations.id desc limit 1) as fecha_solucion'),
+			DB::raw('(select observations.comments from observations where tickets_id = tickets.id order by  observations.id desc limit 1) as comentario'),
+			DB::raw('(select users.first_name from observations inner join users on (observations.users_id = users.id) where tickets_id = tickets.id order by  observations.id desc limit 1) as responsable')
+		)
 			->when(
 				$_GET['columns'][0]['search']['value'] != '',
 				function ($q) {
@@ -97,13 +99,13 @@ class ControladorTickets
 			->when(
 				$_GET['columns'][5]['search']['value'] != '',
 				function ($q) {
-					return $q->where('state_tickets.description', 'LIKE', "%" . $_GET['columns'][5]['search']['value'] . "%");
+					return $q->whereraw('(select state_tickets.description from observations inner join state_tickets on (observations.state_tickets_id = state_tickets.id) where tickets_id = tickets.id order by  observations.id desc limit 1) LIKE "%' . $_GET['columns'][5]['search']['value'] . '%"');
 				}
 			)
 			->when(
 				$_GET['columns'][6]['search']['value'] != '',
 				function ($q) {
-					return $q->where('users.first_name', 'LIKE', "%" . $_GET['columns'][6]['search']['value'] . "%");
+					return $q->whereraw('(select users.first_name from observations inner join users on (observations.users_id = users.id) where tickets_id = tickets.id order by  observations.id desc limit 1) LIKE "%' . $_GET['columns'][6]['search']['value'] . '%"');
 				}
 			)
 			->orderby('tickets.created_at', 'DESC')
@@ -127,10 +129,25 @@ class ControladorTickets
 
 	public function get_ticket(Request $request, Response $response, $args)
 	{
-		$ticket = DB::table('tickets')->leftJoin('observations', 'observations.tickets_id', '=', 'tickets.id')
+		$ticket = Tickets::select(
+			'tickets.area',
+			'tickets.name',
+			'tickets.id',
+			'tickets.problem',
+			'tickets.phone',
+			'tickets.created_at as fecha',
+			DB::raw('(select observations.state_tickets_id from observations inner join state_tickets on (observations.state_tickets_id = state_tickets.id) where tickets_id = tickets.id order by  observations.id desc limit 1) as state_tickets_id')
+			
+		)
 			->where('tickets.id', $args['idticket'])
 			->first();
-		return $response->withStatus(200)->withJson($ticket);
+
+		$comentarios = Observaciones::join('state_tickets', 'state_tickets.id', '=', 'observations.state_tickets_id')
+			->where('tickets_id', $args['idticket'])
+			->orderBy('observations.created_at', 'DESC')
+			->get(['observations.*', 'state_tickets.description']);
+
+		return $response->withStatus(200)->withJson(['ticket' => $ticket, 'comentarios' => $comentarios]);
 	}
 
 	public function save_edit(Request $request, Response $response, $args)
@@ -138,36 +155,52 @@ class ControladorTickets
 
 		$param = $request->getParsedBody();
 
+		$estadoticket = Observaciones::where('tickets_id', $param['idtickets'])
+			->where('state_tickets_id', 2)->first();
+
 		if ($param['idtickets']) {
 			if (!empty($param['estado'])) {
-				DB::table('tickets')->where('id', $param['idtickets'])->update([
-					'state_tickets_id' => $param['estado'],
-					'users_id' => $_SESSION['idusuario']
-				]);
+				if (empty($estadoticket->state_tickets_id)) {
 
-				$commet = DB::table('tickets')->join('observations', 'observations.tickets_id', '=', 'tickets.id')
-					->where('tickets.id', $param['idtickets'])
-					->first();
+					/*DB::table('tickets')->where('id', $param['idtickets'])->update([
+																	 'state_tickets_id' => $param['estado'],
+																	 'users_id' => $_SESSION['idusuario'],
+																	 'updated_at' => date('Y-m-d H:i:s')
+																 ]);*/
 
-				if ($commet) {
-					DB::table('observations')
-						->where('tickets_id', $param['idtickets'])
-						->update([
-							'observations.comments' => $param['textcoment']
-						]);
-				} else {
-					DB::table('observations')->insert([
+					/* $commet = DB::table('tickets')->join('observations', 'observations.tickets_id', '=', 'tickets.id')
+																	 ->where('tickets.id', $param['idtickets'])
+																	 ->first(); */
+
+					/* if ($commet) {
+																	 DB::table('observations')
+																		 ->where('tickets_id', $param['idtickets'])
+																		 ->update([
+																			 'observations.comments' => $param['textcoment']
+																		 ]);
+																 } else { */
+					Observaciones::create([
 						'tickets_id' => $param['idtickets'],
-						'comments' => $param['textcoment']
+						'comments' => $param['comentario'],
+						'users_id' => $_SESSION['idusuario'],
+						'state_tickets_id' => $param['estado']
+					]);
+					//}
+
+					return $response->withStatus(200)->withJson([
+						'succes' => true,
+						'tipo' => 'success',
+						'message' => EDIT
+					]);
+
+				} else {
+					return $response->withStatus(200)->withJson([
+						'succes' => false,
+						'redirect' => 1,
+						'tipo' => 'error',
+						'message' => "El ticket ya se encuentra cerrado y no puede ser editado"
 					]);
 				}
-
-
-				return $response->withStatus(200)->withJson([
-					'succes' => true,
-					'tipo' => 'success',
-					'message' => EDIT
-				]);
 			} else {
 				return $response->withStatus(200)->withJson([
 					'succes' => false,
@@ -184,7 +217,7 @@ class ControladorTickets
 				'area' => $param['area'],
 				'problem' => $param['problem'],
 				'name' => $param['name'],
-				'type_message_id' => 2
+				'state_tickets_id' => 1
 			]);
 
 			return $response->withStatus(201)->withJson([

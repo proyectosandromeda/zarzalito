@@ -292,7 +292,16 @@ $(document).ready(function () {
                 }
             },
             error: function (xhr, desc, err) {
-                alert(desc + ' ' + err)
+                if (xhr.status === 401) {
+                    // Si el usuario no está autenticado, redirigir al login
+                    let data = JSON.parse(xhr.responseText);
+                    window.location.href = data.redirect;
+                } else if (xhr.status === 403) {
+                    // Si no tiene permisos, mostrar alerta
+                    alert("Acceso denegado. No tienes permisos para esta acción.");
+                } else {
+                    console.error("Error desconocido:", xhr);
+                }
             }
         });
     });
@@ -406,7 +415,7 @@ $(document).ready(function () {
 
 
     if ($('#table_tickets')) {
-       let tickets = $('#table_tickets').DataTable({
+        let tickets = $('#table_tickets').DataTable({
             "ajax": `${BaseUrl.ajaxurl}/tickets/all`,
             "bDestroy": true,
             "search": true,
@@ -426,6 +435,7 @@ $(document).ready(function () {
                 { "data": "fecha" },
                 { "data": "estado" },
                 { "data": "responsable" },
+                { "data": "fecha_solucion" },
                 {
                     "data": null, render: function (Data) {
                         return `<a href="javascript:void(0)" class="edit_ticket" data-id="${Data.id}"><svg width="41" height="36" viewBox="0 0 41 36" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -435,7 +445,7 @@ $(document).ready(function () {
                     }
                 }
             ],
-            "dom": 'Brtips',
+            "dom": 'Brtipsl',
             "buttons": [
                 {
                     extend: 'excel',
@@ -454,8 +464,8 @@ $(document).ready(function () {
         $('#table_tickets thead tr').clone(true).appendTo('#table_tickets thead');
         $('#table_tickets thead tr:eq(1) th').each(function (i) {
             var title = $(this).text();
-            
-            if (title !== "Acción") {
+
+            if (title !== "Acciones") {
                 $(this).html('<input type="text" class="form-control" placeholder="Buscar ' + title + '" />');
             }
             $('input', this).on('keyup change', function () {
@@ -473,12 +483,29 @@ $(document).ready(function () {
     $(document).on('click', '.edit_ticket', function (e) {
         let idtext = $(this).data('id')
         $('input[name="idtickets"]').val(idtext)
-        
+
         let datos = procesa_datos_data('get', `${BaseUrl.ajaxurl}/tickets/get_ticket/${idtext}`, {})
         datos.done(function (r) {
-            $('textarea[name="textinfo"]').text(r.problem)
-            $('textarea[name="textcoment"]').text(r.comments)
+            $('.textinfo').text(r.ticket.problem)
+            $('select[name="estado"]').val(r.ticket.state_tickets_id)
+
+            let comentarios = ""
             
+            r.comentarios.forEach(item => {
+                const fecha = new Date(item.created_at);
+                const formatoSimple = `${fecha.getDate().toString().padStart(2, '0')}/${
+                    (fecha.getMonth() + 1).toString().padStart(2, '0')}/${
+                    fecha.getFullYear()} ${
+                    fecha.getHours().toString().padStart(2, '0')}:${
+                    fecha.getMinutes().toString().padStart(2, '0')}:${
+                    fecha.getSeconds().toString().padStart(2, '0')}`;
+
+                comentarios += `${item.comments} \n`
+                comentarios += `${formatoSimple} - Estado: ${item.description} \n\n`
+            });
+
+            $('textarea[name="textcoment"]').text(comentarios)
+
         })
         $('#modal_edit_tickets').modal('show')
     })

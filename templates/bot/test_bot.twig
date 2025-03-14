@@ -25,8 +25,8 @@
 				box-shadow: none !important;
 			}
 
-			.desktop-closed-message-avatar img{
-			border-radius:0 !important;
+			.desktop-closed-message-avatar img {
+				border-radius: 0 !important;
 			}
 
 			/*animacion del avatar en la pagina*/
@@ -45,26 +45,21 @@
 			}
 		</style>
 	</head>
-	<body>
-
-		<script>
-			// Feel free to change the settings on your need
-/*frameEndpoint: 'http://localhost/domicilios/bot/plantilla',
-chatServer: 'http://localhost/domicilios/bot/start/96262',*/
-var botmanWidget = {
-frameEndpoint: 'http://localhost/zarzalito/bot/plantilla',
-chatServer: 'http://localhost/zarzalito/bot/start',
-title: 'Zarzalito',
-introMessage: '',
-placeholderText: 'Preguntame algo',
-mainColor: '#609415',
-bubbleBackground: '',
-headerTextColor: '#ffffff',
-aboutText: ' ',
-aboutLink: ' ',
-bubbleAvatarUrl: 'http://localhost/zarzalito/assets/img/avatar.png',
-};
-		</script>
-		<script src='https://cdn.jsdelivr.net/npm/botman-web-widget@0/build/js/widget.js'></script>
+	<body> <script>			
+		var botmanWidget = {
+		frameEndpoint: '{{env.DOMAIN_SITE}}/bot/plantilla',
+		chatServer: '{{env.DOMAIN_SITE}}/bot/start',
+		title: 'Zarzalito',
+		introMessage: '',
+		placeholderText: 'Preguntame algo',
+		mainColor: '#609415',
+		bubbleBackground: '',
+		headerTextColor: '#ffffff',
+		aboutText: ' ',
+		aboutLink: ' ',
+		bubbleAvatarUrl: '{{env.DOMAIN_SITE}}/assets/img/avatar.png',
+		};
+				</script>
+		 <script src='https://cdn.jsdelivr.net/npm/botman-web-widget@0/build/js/widget.js'></script>
 	</body>
 </html>

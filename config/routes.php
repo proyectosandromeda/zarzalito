@@ -64,16 +64,4 @@ $app->group('/bot', function (RouteCollectorProxy $app) {
     $app->get('', "ControladorBot:load_bot")->setName('BOT');  
     $app->post('/start', "ControladorBot:bot_funcionalidad")->setName('Excepciones');  
     $app->get('/plantilla', "ControladorBot:plantilla")->setName('Excepciones'); 
-    
-    /**menus dinamicos del bot */
-    $app->get("/create_bot", "ControladorMenuBot:index");
-    $app->get('/lineas_valle', "ControladorMenuBot:index_menu_valle"); 
-    $app->post("/add_menu", "ControladorMenuBot:upload_files_audios_images");
-    $app->post("/save_menu", "ControladorMenuBot:guarda_menu")->setName('SaveMenu');
-    $app->get("/get_item/{iditem:[0-9]+}", "ControladorMenuBot:get_item")->setName('Excepciones');  
-    $app->post("/menu_del", "ControladorMenuBot:delete_menu");
-    $app->post("/editar_menu", "ControladorMenuBot:edit_menu");    
-
-    $app->get('/productos_bot/{idcliente:[0-9]+}/{categoria:[0-9]+}', "ControladorMenuBot:lista_producto")->setName('Catalogo');  
-    $app->get('/pruebas', "ControladorBot:prueba")->setName('BOT'); 
 });

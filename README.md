@@ -99,6 +99,8 @@ SweetAlert2 para alertas personalizadas.
     BD_MYSQL=tu_base_de_datos
     USER_BD_MYSQL=tu_usuario
     PASS_BD_MYSQL=tu_contraseña
+    
+    DOMAIN_SITE="url del doinio"
 
     EMAIL_HOST=smtp.tu_proveedor_email.com
     EMAIL_PORT=587
@@ -143,18 +145,62 @@ La solución consta de dos componentes principales:
 1. Copia el siguiente código en la página HTML donde deseas mostrar el bot:
 
 ```html
+<style>
+
+/* Personaliza el tamaño del bubbleAvatar */
+#botmanWidgetRoot > div:first-of-type {
+    min-height: 270px !important;
+}
+
+#botmanWidgetRoot img {
+    width: auto !important;
+}
+
+.desktop-closed-message-avatar {
+    top: 100px !important;
+    right: 20px;
+    height: 160px !important;
+    width: 160px !important;
+    box-shadow: none !important;
+}
+
+.desktop-closed-message-avatar img {
+    border-radius: 0 !important;
+}
+
+/*animacion del avatar en la pagina*/
+@keyframes suaveBounce {
+    0,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+#botmanWidgetRoot img {
+    animation: suaveBounce 1.5s ease-in-out infinite;
+}
+</style>
+
 <script>
-var botmanWidget = {
-  frameEndpoint: 'http://{{url}}/bot/plantilla',
-  chatServer: 'http://{{url}}/bot/start',
-  title: 'ROBI',
-  introMessage: '¡Hola! Este es el nuevo mensaje.',
-  placeholderText: 'Pregúntame algo',
-  mainColor: '#0943B5',
-  bubbleBackground: '#0943B5',
-  headerTextColor: '#ffffff',
-  bubbleAvatarUrl: 'http://{{url}}/assets/images/bot.png'
-};
+ var botmanWidget = {
+        frameEndpoint: '{{domain}}/bot/plantilla',
+        chatServer: '{{domain}}/bot/start',
+        introMessage: '',
+        bubbleBackground: '',
+        aboutText: ' ',
+        aboutLink: ' ',
+        title: 'Zarzalito',
+        introMessage: '¡Hola! Este es el nuevo mensaje.',
+        placeholderText: 'Pregúntame algo',
+        mainColor: '#609415',
+        headerTextColor: '#ffffff',
+        bubbleBackground: '',
+        headerTextColor: '#ffffff',
+        bubbleAvatarUrl: '{{domain}}/assets/img/avatar.png'
+    };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/botman-web-widget@0/build/js/widget.js"></script>
 ```

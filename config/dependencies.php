@@ -3,7 +3,9 @@ use Symfony\Component\Dotenv\Dotenv;
 $dotenv = new Dotenv();
 $dotenv->load('../.env');
 
-
+$capsule = new \Illuminate\Database\Capsule\Manager;
+$charset = 'utf8mb4';
+$collate = 'utf8mb4_unicode_ci';
 
 //conexion a la BD
 $options = [
@@ -25,7 +27,7 @@ $config = [
     $options
 ];
 
-$capsule = new \Illuminate\Database\Capsule\Manager;
+
 $capsule->addConnection($config);
 $capsule->setAsGlobal();
 $capsule->bootEloquent();

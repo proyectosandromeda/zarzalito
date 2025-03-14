@@ -3,15 +3,16 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 27-02-2025 a las 19:55:22
+-- Tiempo de generación: 14-03-2025 a las 16:14:37
 -- Versión del servidor: 8.0.41-0ubuntu0.22.04.1
--- Versión de PHP: 8.2.27
+-- Versión de PHP: 8.2.28
 
+SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-SET FOREIGN_KEY_CHECKS = 0;
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -110,7 +111,11 @@ INSERT INTO `menu_aplicacion` (`id`, `title`, `url`, `pid`, `parent`, `icon_clas
 CREATE TABLE `observations` (
   `id` int NOT NULL,
   `comments` text,
-  `tickets_id` int NOT NULL
+  `tickets_id` int NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `users_id` int DEFAULT NULL,
+  `state_tickets_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -147,7 +152,8 @@ INSERT INTO `persistences` (`id`, `user_id`, `code`, `created_at`, `updated_at`)
 (41, 1, 'j76k1tJA1nCHxuw6gtQMzxyDo2VICIVr', '2025-02-17 14:26:23', '2025-02-17 14:26:23'),
 (44, 15, 'H3UfYvJQxGHtTB4jBkxSKzqV3tdWfCO5', '2025-02-17 20:25:28', '2025-02-17 20:25:28'),
 (46, 1, 'cz1kBvd1MEHA9WyRMaQpYfhBxRsqkda0', '2025-02-19 14:39:20', '2025-02-19 14:39:20'),
-(49, 1, '32bQmTMhwk27OMgmjTjvXjbfNycB7sRH', '2025-02-20 16:08:13', '2025-02-20 16:08:13');
+(49, 1, '32bQmTMhwk27OMgmjTjvXjbfNycB7sRH', '2025-02-20 16:08:13', '2025-02-20 16:08:13'),
+(53, 1, 'gWavhCxyf2hwQBWmm1J7AW2qiNUGdYXD', '2025-03-14 15:39:35', '2025-03-14 15:39:35');
 
 -- --------------------------------------------------------
 
@@ -249,7 +255,7 @@ CREATE TABLE `state_tickets` (
 INSERT INTO `state_tickets` (`id`, `description`) VALUES
 (1, 'En proceso'),
 (2, 'Realizado'),
-(3, 'En proceso');
+(3, 'Pendiente');
 
 -- --------------------------------------------------------
 
@@ -294,7 +300,9 @@ INSERT INTO `throttle` (`id`, `user_id`, `type`, `ip`, `created_at`, `updated_at
 (21, NULL, 'ip', '::1', '2025-02-10 17:27:51', '2025-02-10 17:27:51'),
 (22, NULL, 'global', NULL, '2025-02-19 22:59:37', '2025-02-19 22:59:37'),
 (23, NULL, 'ip', '::1', '2025-02-19 22:59:37', '2025-02-19 22:59:37'),
-(24, 15, 'user', NULL, '2025-02-19 22:59:37', '2025-02-19 22:59:37');
+(24, 15, 'user', NULL, '2025-02-19 22:59:37', '2025-02-19 22:59:37'),
+(25, NULL, 'global', NULL, '2025-03-07 13:25:45', '2025-03-07 13:25:45'),
+(26, NULL, 'ip', '::1', '2025-03-07 13:25:45', '2025-03-07 13:25:45');
 
 -- --------------------------------------------------------
 
@@ -309,9 +317,7 @@ CREATE TABLE `tickets` (
   `problem` text,
   `phone` varchar(45) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  `state_tickets_id` int NOT NULL,
-  `users_id` int DEFAULT NULL
+  `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -355,7 +361,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `password`, `permissions`, `last_login`, `first_name`, `last_name`, `created_at`, `updated_at`) VALUES
-(1, 'mail@correo.com', '$2y$10$sPateoIW1BaTdGsu9rRVMOY6x.10c2c9kqxbiqQH2luCMDHyruAt2', NULL, '2025-02-26 14:44:43', 'prueba', 'pruebita', '2025-02-05 20:04:18', '2025-02-26 14:44:43'),
+(1, 'mail@correo.com', '$2y$10$sPateoIW1BaTdGsu9rRVMOY6x.10c2c9kqxbiqQH2luCMDHyruAt2', NULL, '2025-03-14 15:39:35', 'prueba', 'pruebita', '2025-02-05 20:04:18', '2025-03-14 15:39:35'),
 (13, 'rivera.jorge@correounivalle.edu.co', '$2y$10$/PaIdnh23RynNGSY0wznbudLv0X/txoaRZizU26pXcDB6bDBnF7jS', NULL, NULL, 'Jorge Antonio ', 'Rivera ', '2025-02-17 19:24:23', '2025-02-17 19:24:23'),
 (14, 'einer.zamora@correounivalle.edu.co', '$2y$10$uSNoIs/fuG1xIRigi8Y3B.8SJ2O5a4yWOAFtkP5sfSfTJQdxaOaj.', NULL, NULL, 'Alejandro ', 'Zamora', '2025-02-17 19:24:46', '2025-02-17 19:24:46'),
 (15, 'informatica@zarzal-valle.gov.co', '$2y$10$b/jHdHZt/JYAS0nc5M7ejOifgR27rQMhLwzLKuZET97Q.qsvSGkmS', NULL, '2025-02-17 20:25:28', ' Carlos Manuel ', 'Nuñez Diaz', '2025-02-17 19:25:11', '2025-02-19 22:59:16');
@@ -389,7 +395,9 @@ ALTER TABLE `menu_aplicacion`
 --
 ALTER TABLE `observations`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_observations_tickets1_idx` (`tickets_id`);
+  ADD KEY `fk_observations_tickets1_idx` (`tickets_id`),
+  ADD KEY `fk_observations_users1_idx` (`users_id`),
+  ADD KEY `fk_observations_state_tickets1_idx` (`state_tickets_id`);
 
 --
 -- Indices de la tabla `persistences`
@@ -444,9 +452,7 @@ ALTER TABLE `throttle`
 -- Indices de la tabla `tickets`
 --
 ALTER TABLE `tickets`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_tickets_state_tickets1_idx` (`state_tickets_id`),
-  ADD KEY `fk_tickets_users1_idx` (`users_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `type_message`
@@ -493,7 +499,7 @@ ALTER TABLE `observations`
 -- AUTO_INCREMENT de la tabla `persistences`
 --
 ALTER TABLE `persistences`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- AUTO_INCREMENT de la tabla `reminders`
@@ -529,7 +535,7 @@ ALTER TABLE `state_tickets`
 -- AUTO_INCREMENT de la tabla `throttle`
 --
 ALTER TABLE `throttle`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de la tabla `tickets`
@@ -569,7 +575,9 @@ ALTER TABLE `configuration`
 -- Filtros para la tabla `observations`
 --
 ALTER TABLE `observations`
-  ADD CONSTRAINT `fk_observations_tickets1` FOREIGN KEY (`tickets_id`) REFERENCES `tickets` (`id`);
+  ADD CONSTRAINT `fk_observations_state_tickets1` FOREIGN KEY (`state_tickets_id`) REFERENCES `state_tickets` (`id`),
+  ADD CONSTRAINT `fk_observations_tickets1` FOREIGN KEY (`tickets_id`) REFERENCES `tickets` (`id`),
+  ADD CONSTRAINT `fk_observations_users1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`);
 
 --
 -- Filtros para la tabla `persistences`
@@ -595,16 +603,8 @@ ALTER TABLE `role_users`
 --
 ALTER TABLE `throttle`
   ADD CONSTRAINT `fk_throttle_users1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
-
---
--- Filtros para la tabla `tickets`
---
-ALTER TABLE `tickets`
-  ADD CONSTRAINT `fk_tickets_state_tickets1` FOREIGN KEY (`state_tickets_id`) REFERENCES `state_tickets` (`id`),
-  ADD CONSTRAINT `fk_tickets_users1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`);
+SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
-
-SET FOREIGN_KEY_CHECKS = 1;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

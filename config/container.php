@@ -105,6 +105,10 @@ $container->set('flash', function () {
 });
 
 
+$container->set('reminder', function (Container $container) {
+
+    return new \Cartalyst\Sentinel\Reminders\IlluminateReminderRepository($user);
+});
 
 
 $container->set('view', function (Container $container) use ($app) {
@@ -119,6 +123,8 @@ $container->set('view', function (Container $container) use ($app) {
 
     $environment = $twig->getEnvironment();
     $environment->addGlobal('session', $_SESSION);
+    $environment->addGlobal('env', $_ENV);    
+    $environment->addGlobal('base_url', $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST']);
 
     return $twig;
 });

@@ -2,6 +2,8 @@
 
 namespace App\Controladores;
 
+use App\Modelos\ModeloObservaciones as Observaciones;
+
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Outgoing\Question;
@@ -125,10 +127,15 @@ class OnboardingConversation extends Conversation
             'name' => $this->nombre,
             'area' => $this->area,
             'phone' => $this->telefono,
-            'problem' => $this->problema,
-            'state_tickets_id' => 1,
+            'problem' => $this->problema,            
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')
+        ]);
+
+        Observaciones::create([
+            'tickets_id' => $idticket,
+            'comments' => $this->problema,
+            'state_tickets_id' => 1            
         ]);
 
         $ntiket = str_pad($idticket, 6, "0", STR_PAD_LEFT);
