@@ -61,7 +61,7 @@ $app->group('/tickets', function (RouteCollectorProxy $app) {
 })->add('csrf');
 
 $app->group('/bot', function (RouteCollectorProxy $app) { 
-    $app->get('', "ControladorBot:load_bot")->setName('BOT');  
+    $app->get('', "ControladorBot:load_bot")->setName('Excepciones');  
     $app->post('/start', "ControladorBot:bot_funcionalidad")->setName('Excepciones');  
     $app->get('/plantilla', "ControladorBot:plantilla")->setName('Excepciones'); 
 });

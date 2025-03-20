@@ -1,14 +1,14 @@
 {% extends 'master.twig' %}
 {% block title %}
-	Home
+	Home - Dashboard
 {% endblock %}
 
 {% block body %}
 
 
 	<div class="row">
-
-</div>
+		<iframe src="{{env.URL_DASHBOARD}}?standalone=1&height=100vh&show_filters=true&expand_filters=true&refresh=20" style="width:100%; height:110vh"></iframe>
+	</div>
 
 
 {% endblock %}
